@@ -5,12 +5,12 @@ import { getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import Users from "../models/Users";
+import User from "../models/User";
 import MailerModule from "../modules/mailer";
 
 export default {
   async create(request: Request, response: Response) {
-    const usersRepository = getRepository(Users);
+    const usersRepository = getRepository(User);
     const { name, email, password, phone } = request.body;
 
     const userExists = await usersRepository.findOne({ where: { email } });
@@ -50,7 +50,7 @@ export default {
   },
 
   async index(request: Request, response: Response) {
-    const usersRepository = getRepository(Users);
+    const usersRepository = getRepository(User);
 
     if (!request.useMaster && !request.useEmployee) {
       return response
@@ -77,7 +77,7 @@ export default {
 
   async update(request: Request, response: Response) {
     const { id } = request.params;
-    const userRepository = getRepository(Users);
+    const userRepository = getRepository(User);
 
     const user = await userRepository.findOne({ where: { id } });
 
@@ -139,7 +139,7 @@ export default {
   },
 
   async delete(request: Request, response: Response) {
-    const usersRepository = getRepository(Users);
+    const usersRepository = getRepository(User);
     const { id } = request.params;
 
     if (!request.useMaster) {
@@ -161,7 +161,7 @@ export default {
   //login controller
 
   async login(request: Request, response: Response) {
-    const repository = getRepository(Users);
+    const repository = getRepository(User);
 
     const { email, password } = request.body;
     const users = await repository.findOne({ where: { email } });
@@ -192,7 +192,7 @@ export default {
     const newPassword = crypto.randomBytes(4).toString("hex");
     let password = await bcrypt.hash(newPassword, 8);
 
-    const usersRepository = getRepository(Users);
+    const usersRepository = getRepository(User);
     const user = await usersRepository.findOne({
       where: { email },
     });
@@ -218,5 +218,52 @@ export default {
     } catch (error) {
       return response.status(401).json({ message: "Faild to send" });
     }
+  },
+
+  async new(request: Request, response: Response) {
+    const usersRepository = getRepository(User);
+    const { name, email, password, phone, employee } = request.body;
+
+    const userExists = await usersRepository.findOne({ where: { email } });
+
+    if (userExists) {
+      return response.status(400).json({ error: "Usuario já existe!" });
+    }
+
+    if (!request.useMaster) {
+      return response.status(401).json({
+        error: "Somente Adminstradores podem criar esse tipo de usuario!",
+      });
+    }
+
+    const data = {
+      name,
+      email,
+      password,
+      phone,
+      employee,
+      master: false,
+    };
+
+    const schema = Yup.object().shape({
+      name: Yup.string().required("Nome obrigatório"),
+      email: Yup.string().required("email obrigatório"),
+      password: Yup.string().required("senha obrigatório").max(6),
+      phone: Yup.string().required("celular obrigatório"),
+      employee: Yup.boolean().required("Cargo obrigatório"),
+    });
+
+    if (!(await schema.isValid(request.body))) {
+      return response.status(401).json({ error: "Validation Fails" });
+    }
+
+    await schema.validate(data, {
+      abortEarly: false,
+    });
+
+    const users = usersRepository.create(data);
+    await usersRepository.save(users);
+
+    return response.status(201).json(users);
   },
 };

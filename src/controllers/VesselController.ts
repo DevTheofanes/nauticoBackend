@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import Vessel from "../models/Vessel";
 import Damaged from "../models/Damaged";
-import Reviews from "../models/Reviews";
+import Review from "../models/Review";
 import Schedule from "../models/Schedule";
 import Finding from "../models/Finding";
 import CheckListE from "../models/CheckListE";
@@ -148,7 +148,7 @@ export default {
 
   async delete(request: Request, response: Response) {
     const vesselRepository = getRepository(Vessel);
-    const reviewsRepository = getRepository(Reviews);
+    const reviewsRepository = getRepository(Review);
     const damagedRepository = getRepository(Damaged);
     const scheduleRepository = getRepository(Schedule);
     const findingRepository = getRepository(Finding);

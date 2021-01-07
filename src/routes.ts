@@ -1,82 +1,62 @@
 import { Router } from "express";
-import UsersController from "./controllers/UsersController";
+import UserController from "./controllers/UserController";
 import VesselController from "./controllers/VesselController";
 import DamagedController from "./controllers/DamagedController";
 import ReviewController from "./controllers/ReviewController";
-import SchedulesController from "./controllers/SchedulesController";
-import FindingsController from "./controllers/FindingsController";
+import ScheduleController from "./controllers/ScheduleController";
+import FindingController from "./controllers/FindingController";
 import CheckListController from "./controllers/CheckListController";
-
 import authMiddleware from "./middlewares/authMiddlewe";
-import ControllertudoController from "./controllers/ControllerstudoController";
 
 const routes = Router();
 
 //Criação de Master e Login
-routes.post("/usersMasters", UsersController.create);
-routes.post("/login", UsersController.login);
-routes.post("/forgot", UsersController.forgotPassword);
+routes.post("/usersMasters", UserController.create);
+routes.post("/login", UserController.login);
+routes.post("/forgot", UserController.forgotPassword);
+
+routes.use(authMiddleware);
 
 //Criar e ver Funcionarios/Clientes
-routes.get("/users", authMiddleware, UsersController.index);
-routes.post("/users", authMiddleware, ControllertudoController.create);
-routes.put("/users/:id", authMiddleware, UsersController.update);
-routes.delete("/users/:id", authMiddleware, UsersController.delete);
+routes.get("/users", UserController.index);
+routes.post("/users", UserController.new);
+routes.put("/users/:id", UserController.update);
+routes.delete("/users/:id", UserController.delete);
 
 //Embarcações
-routes.post("/vessels", authMiddleware, VesselController.create);
-routes.get("/vessels", authMiddleware, VesselController.index);
-routes.put("/vessels/:id", authMiddleware, VesselController.update);
-routes.delete("/vessels/:id", authMiddleware, VesselController.delete);
+routes.post("/vessels", VesselController.create);
+routes.get("/vessels", VesselController.index);
+routes.put("/vessels/:id", VesselController.update);
+routes.delete("/vessels/:id", VesselController.delete);
 
 //Avarias
-routes.post("/damaged", authMiddleware, DamagedController.create);
-routes.get("/damaged/:id", authMiddleware, DamagedController.index);
-routes.put("/damaged/:id", authMiddleware, DamagedController.update);
-routes.delete("/damaged/:id", authMiddleware, DamagedController.delete);
+routes.post("/damaged", DamagedController.create);
+routes.get("/damaged/:id", DamagedController.index);
+routes.put("/damaged/:id", DamagedController.update);
+routes.delete("/damaged/:id", DamagedController.delete);
 
 //Revisões
-routes.post("/reviews", authMiddleware, ReviewController.create);
-routes.get("/reviews/:id", authMiddleware, ReviewController.index);
-routes.put("/reviews/:id", authMiddleware, ReviewController.update);
-routes.delete("/reviews/:id", authMiddleware, ReviewController.delete);
+routes.post("/reviews", ReviewController.create);
+routes.get("/reviews/:id", ReviewController.index);
+routes.put("/reviews/:id", ReviewController.update);
+routes.delete("/reviews/:id", ReviewController.delete);
 
 //Achados e Perdidos
-routes.post(
-  "/vessels/:vesselId/findings",
-  authMiddleware,
-  FindingsController.create
-);
-routes.get(
-  "/vessels/:vesselId/findings",
-  authMiddleware,
-  FindingsController.show
-);
-routes.get("/findings", authMiddleware, FindingsController.index);
-routes.put("/findings/:id", authMiddleware, FindingsController.update);
-routes.delete("/findings/:id", authMiddleware, FindingsController.delete);
+routes.post("/vessels/:vesselId/findings", FindingController.create);
+routes.get("/vessels/:vesselId/findings", FindingController.show);
+routes.get("/findings", FindingController.index);
+routes.put("/findings/:id", FindingController.update);
+routes.delete("/findings/:id", FindingController.delete);
 
 //Agendamentos
-routes.post(
-  "/vessels/:vesselId/schedules",
-  authMiddleware,
-  SchedulesController.create
-);
-routes.get(
-  "/vessels/:vesselId/schedules",
-  authMiddleware,
-  SchedulesController.show
-);
-routes.get("/schedules", authMiddleware, SchedulesController.index);
-routes.put("/schedules/:id", authMiddleware, SchedulesController.update);
-routes.delete("/schedules/:id", authMiddleware, SchedulesController.delete);
+routes.post("/vessels/:vesselId/schedules", ScheduleController.create);
+routes.get("/vessels/:vesselId/schedules", ScheduleController.show);
+routes.get("/schedules", ScheduleController.index);
+routes.put("/schedules/:id", ScheduleController.update);
+routes.delete("/schedules/:id", ScheduleController.delete);
 
 //CheckList
-routes.get("/vessels/:id/checkList", authMiddleware, CheckListController.index);
-routes.put(
-  "/vessels/:id/checkList",
-  authMiddleware,
-  CheckListController.update
-);
+routes.get("/vessels/:id/checkList", CheckListController.index);
+routes.put("/vessels/:id/checkList", CheckListController.update);
 
 export default routes;

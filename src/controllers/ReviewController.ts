@@ -2,12 +2,12 @@ import * as Yup from "yup";
 import { parseISO, isBefore, isAfter } from "date-fns";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import Reviews from "../models/Reviews";
+import Review from "../models/Review";
 import Vessel from "../models/Vessel";
 
 export default {
   async create(request: Request, response: Response) {
-    const reviewsRepository = getRepository(Reviews);
+    const reviewsRepository = getRepository(Review);
     const vesselRepository = getRepository(Vessel);
 
     const schema = Yup.object().shape({
@@ -74,7 +74,7 @@ export default {
 
   async index(request: Request, response: Response) {
     const { id } = request.params;
-    const reviewsRepository = getRepository(Reviews);
+    const reviewsRepository = getRepository(Review);
 
     const reviews = await reviewsRepository.find({
       where: { vesselId: id },
@@ -85,7 +85,7 @@ export default {
 
   async update(request: Request, response: Response) {
     const { id } = request.params;
-    const reviewsRepository = getRepository(Reviews);
+    const reviewsRepository = getRepository(Review);
 
     const schema = Yup.object().shape({
       lastReview: Yup.date().required(),
@@ -146,7 +146,7 @@ export default {
   },
 
   async delete(request: Request, response: Response) {
-    const reviewRepository = getRepository(Reviews);
+    const reviewRepository = getRepository(Review);
 
     const { id }: any = request.params;
 
