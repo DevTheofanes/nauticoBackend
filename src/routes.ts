@@ -5,6 +5,7 @@ import DamagedController from "./controllers/DamagedController";
 import ReviewController from "./controllers/ReviewController";
 import SchedulesController from "./controllers/SchedulesController";
 import FindingsController from "./controllers/FindingsController";
+import CheckListController from "./controllers/CheckListController";
 // import EmbarcacoeslanchaController from "./controllers/EmbarcacoeslanchaController";
 // import EmbarcacoesjetskiController from "./controllers/EmbarcacoesjetskiController";
 // import AvariaslanchaController from "./controllers/AvariaslanchaController";
@@ -72,6 +73,14 @@ routes.get(
 );
 routes.get("/schedules", authMiddleware, SchedulesController.index);
 routes.put("/schedules/:id", authMiddleware, SchedulesController.update);
+
+//CheckList
+routes.get("/vessels/:id/checkList", authMiddleware, CheckListController.index);
+routes.put(
+  "/vessels/:id/checkList",
+  authMiddleware,
+  CheckListController.update
+);
 
 // //descarte
 // routes.post("/auth", authMiddleware, AuthController.authenticate);

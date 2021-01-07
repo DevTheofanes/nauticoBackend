@@ -58,8 +58,8 @@ export default {
     await vesselRepository.save(vessel);
 
     if (!vessel.jetski) {
-      const check = checkERepository.create({ vesselId: vessel.id, a: false });
-      // await checkERepository.save(check);
+      const check = checkERepository.create({ vesselId: vessel.id });
+      await checkERepository.save(check);
       console.log(check);
     }
 
