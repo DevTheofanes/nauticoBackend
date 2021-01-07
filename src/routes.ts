@@ -30,6 +30,7 @@ routes.post("/forgot", UsersController.forgotPassword);
 routes.get("/users", authMiddleware, UsersController.index);
 routes.post("/users", authMiddleware, ControllertudoController.create);
 routes.put("/users/:id", authMiddleware, UsersController.update);
+routes.delete("/users/:id", authMiddleware, UsersController.delete);
 
 //Embarcações
 routes.post("/vessels", authMiddleware, VesselController.create);

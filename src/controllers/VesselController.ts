@@ -3,7 +3,8 @@ import * as Yup from "yup";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import Vessel from "../models/Vessel";
-import CheckE from "../models/CheckE";
+import CheckListE from "../models/CheckListE";
+import CheckListJ from "../models/CheckListJ";
 
 export default {
   async create(request: Request, response: Response) {
@@ -36,7 +37,8 @@ export default {
     } = request.body;
 
     const vesselRepository = getRepository(Vessel);
-    const checkERepository = getRepository(CheckE);
+    const checkListERepository = getRepository(CheckListE);
+    const checkListJRepository = getRepository(CheckListJ);
 
     if (!request.useMaster) {
       return response
@@ -58,8 +60,14 @@ export default {
     await vesselRepository.save(vessel);
 
     if (!vessel.jetski) {
-      const check = checkERepository.create({ vesselId: vessel.id });
-      await checkERepository.save(check);
+      const check = checkListERepository.create({ vesselId: vessel.id });
+      await checkListERepository.save(check);
+      console.log(check);
+    }
+
+    if (vessel.jetski) {
+      const check = checkListJRepository.create({ vesselId: vessel.id });
+      await checkListJRepository.save(check);
       console.log(check);
     }
 

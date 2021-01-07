@@ -138,6 +138,26 @@ export default {
     return response.status(200).json(userEdited);
   },
 
+  async delete(request: Request, response: Response) {
+    const usersRepository = getRepository(Users);
+    const { id } = request.params;
+
+    if (!request.useMaster) {
+      return response
+        .status(401)
+        .json({ error: "Apenas administradores podem acessar essa rota" });
+    }
+
+    const user = await usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return response.status(400).json({ error: "Esse usuario não existe!" });
+    }
+
+    const results = await usersRepository.delete(id);
+    return response.send(results);
+  },
+
   //login controller
 
   async login(request: Request, response: Response) {
