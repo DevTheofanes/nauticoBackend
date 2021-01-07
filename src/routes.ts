@@ -6,16 +6,7 @@ import ReviewController from "./controllers/ReviewController";
 import SchedulesController from "./controllers/SchedulesController";
 import FindingsController from "./controllers/FindingsController";
 import CheckListController from "./controllers/CheckListController";
-// import EmbarcacoeslanchaController from "./controllers/EmbarcacoeslanchaController";
-// import EmbarcacoesjetskiController from "./controllers/EmbarcacoesjetskiController";
-// import AvariaslanchaController from "./controllers/AvariaslanchaController";
-// import AvariasjetskiController from "./controllers/AvariasjetskiController";
-// import AchadoslanchaController from "./controllers/AchadoslanchaController";
-// import AchadosjetskipController from "./controllers/AchadosjetskipController";
-// import RevisaolanchaController from "./controllers/RevisaolanchaController";
-// import RevisaojetController from "./controllers/RevisaojetskipController";
-// import AgendamentoController from "./controllers/AgendamentoController";
-// import AuthController from "./controllers/AuthController";
+
 import authMiddleware from "./middlewares/authMiddlewe";
 import ControllertudoController from "./controllers/ControllerstudoController";
 
@@ -36,16 +27,19 @@ routes.delete("/users/:id", authMiddleware, UsersController.delete);
 routes.post("/vessels", authMiddleware, VesselController.create);
 routes.get("/vessels", authMiddleware, VesselController.index);
 routes.put("/vessels/:id", authMiddleware, VesselController.update);
+routes.delete("/vessels/:id", authMiddleware, VesselController.delete);
 
 //Avarias
 routes.post("/damaged", authMiddleware, DamagedController.create);
 routes.get("/damaged/:id", authMiddleware, DamagedController.index);
 routes.put("/damaged/:id", authMiddleware, DamagedController.update);
+routes.delete("/damaged/:id", authMiddleware, DamagedController.delete);
 
 //Revisões
 routes.post("/reviews", authMiddleware, ReviewController.create);
 routes.get("/reviews/:id", authMiddleware, ReviewController.index);
 routes.put("/reviews/:id", authMiddleware, ReviewController.update);
+routes.delete("/reviews/:id", authMiddleware, ReviewController.delete);
 
 //Achados e Perdidos
 routes.post(
@@ -60,6 +54,7 @@ routes.get(
 );
 routes.get("/findings", authMiddleware, FindingsController.index);
 routes.put("/findings/:id", authMiddleware, FindingsController.update);
+routes.delete("/findings/:id", authMiddleware, FindingsController.delete);
 
 //Agendamentos
 routes.post(
@@ -74,6 +69,7 @@ routes.get(
 );
 routes.get("/schedules", authMiddleware, SchedulesController.index);
 routes.put("/schedules/:id", authMiddleware, SchedulesController.update);
+routes.delete("/schedules/:id", authMiddleware, SchedulesController.delete);
 
 //CheckList
 routes.get("/vessels/:id/checkList", authMiddleware, CheckListController.index);
@@ -82,22 +78,5 @@ routes.put(
   authMiddleware,
   CheckListController.update
 );
-
-// //descarte
-// routes.post("/auth", authMiddleware, AuthController.authenticate);
-// routes.post("/embarcacoes", authMiddleware, EmbarcacoeslanchaController.create);
-
-// routes.post(
-//   "/embarcacoesjet",
-//   authMiddleware,
-//   EmbarcacoesjetskiController.create
-// );
-// routes.post("/avariaslancha", authMiddleware, AvariaslanchaController.create);
-// routes.post("/avariasjetski", authMiddleware, AvariasjetskiController.create);
-// routes.post("/achadoslancha", authMiddleware, AchadoslanchaController.create);
-// routes.post("/achadosjetskip", authMiddleware, AchadosjetskipController.create);
-// routes.post("/revisaolancha", authMiddleware, RevisaolanchaController.create);
-// routes.post("/revisaojet", authMiddleware, RevisaojetController.create);
-// routes.post("/agendamento", authMiddleware, AgendamentoController.create);
 
 export default routes;

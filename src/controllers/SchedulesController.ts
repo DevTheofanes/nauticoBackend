@@ -117,4 +117,21 @@ export default {
 
     return response.status(201).json(schedule);
   },
+
+  async delete(request: Request, response: Response) {
+    const scheduleRepository = getRepository(Schedule);
+
+    const { id }: any = request.params;
+
+    const schedule = await scheduleRepository.findOne({ where: { id } });
+    if (!schedule) {
+      return response
+        .status(400)
+        .json({ error: "Agendamento não encontrado!" });
+    }
+
+    const deleteSchedule = await scheduleRepository.delete(id);
+
+    return response.json(deleteSchedule);
+  },
 };

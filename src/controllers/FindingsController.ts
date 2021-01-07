@@ -102,4 +102,27 @@ export default {
 
     return response.status(201).json(finding);
   },
+
+  async delete(request: Request, response: Response) {
+    const findingRepository = getRepository(Finding);
+
+    const { id }: any = request.params;
+
+    if (!request.useMaster && !request.useEmployee) {
+      return response
+        .status(401)
+        .json({ error: "Usuarios não podem acessar essa rota" });
+    }
+
+    const finding = await findingRepository.findOne({ where: { id } });
+    if (!finding) {
+      return response
+        .status(400)
+        .json({ error: "Item de achados e perdidos, não encontrado!" });
+    }
+
+    const deleteFinding = await findingRepository.delete(id);
+
+    return response.json(deleteFinding);
+  },
 };

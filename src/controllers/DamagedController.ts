@@ -24,7 +24,6 @@ export default {
     const vessel = await vesselRepository.findOne({
       where: { id: vesselId },
     });
-    console.log(vessel);
 
     if (!vessel) {
       return response.status(400).json({ error: "Embarcação não encontrada" });
@@ -91,5 +90,26 @@ export default {
     const damagedEdited = await damagedRepository.save(damaged);
 
     return response.json(damagedEdited);
+  },
+
+  async delete(request: Request, response: Response) {
+    const damagedRepository = getRepository(Damaged);
+
+    const { id }: any = request.params;
+
+    if (!request.useMaster && !request.useEmployee) {
+      return response
+        .status(401)
+        .json({ error: "Usuarios não podem acessar essa rota" });
+    }
+
+    const damaged = await damagedRepository.findOne({ where: { id } });
+    if (!damaged) {
+      return response.status(400).json({ error: "Avaria não encontrada!" });
+    }
+
+    const deleteDamaged = await damagedRepository.delete(id);
+
+    return response.json(deleteDamaged);
   },
 };

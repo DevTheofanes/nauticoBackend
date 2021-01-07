@@ -5,14 +5,6 @@ import { getRepository } from "typeorm";
 import Reviews from "../models/Reviews";
 import Vessel from "../models/Vessel";
 
-interface Review {
-  lastReview: Date;
-  engineHour: string;
-  firm: string;
-  nextReview: Date;
-  expert: string;
-}
-
 export default {
   async create(request: Request, response: Response) {
     const reviewsRepository = getRepository(Reviews);
@@ -151,5 +143,26 @@ export default {
     const reviewEdited = await reviewsRepository.save(review);
 
     return response.status(201).json(reviewEdited);
+  },
+
+  async delete(request: Request, response: Response) {
+    const reviewRepository = getRepository(Reviews);
+
+    const { id }: any = request.params;
+
+    if (!request.useMaster && !request.useEmployee) {
+      return response
+        .status(401)
+        .json({ error: "Usuarios não podem acessar essa rota" });
+    }
+
+    const review = await reviewRepository.findOne({ where: { id } });
+    if (!review) {
+      return response.status(400).json({ error: "Revisão não encontrada!" });
+    }
+
+    const deleteReview = await reviewRepository.delete(id);
+
+    return response.json(deleteReview);
   },
 };
