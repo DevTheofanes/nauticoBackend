@@ -2,6 +2,8 @@ import * as Yup from "yup";
 
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+
+import User from "../models/User";
 import Vessel from "../models/Vessel";
 import Damaged from "../models/Damaged";
 import Review from "../models/Review";
@@ -13,6 +15,7 @@ import CheckListJ from "../models/CheckListJ";
 export default {
   async create(request: Request, response: Response) {
     const schema = Yup.object().shape({
+      userId: Yup.bool().required("campo obrigatório"),
       jetski: Yup.bool().required("campo obrigatório"),
       name: Yup.string().required("campo obrigatório"),
       proprietario: Yup.string().required("campo obrigatório"),
@@ -29,6 +32,7 @@ export default {
     }
 
     const {
+      userId,
       jetski,
       name,
       proprietario,
@@ -41,6 +45,7 @@ export default {
     } = request.body;
 
     const vesselRepository = getRepository(Vessel);
+    const userRepository = getRepository(User);
     const checkListERepository = getRepository(CheckListE);
     const checkListJRepository = getRepository(CheckListJ);
 
@@ -48,6 +53,13 @@ export default {
       return response
         .status(401)
         .json({ error: "Somente Adminstradores podem criar embarcações!" });
+    }
+
+    const user = await userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      return response
+        .status(400)
+        .json({ error: "Dono da embarcação não encontrado" });
     }
 
     const vessel = vesselRepository.create({

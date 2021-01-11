@@ -3,7 +3,6 @@ import * as crypto from "crypto";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 import User from "../models/User";
 import MailerModule from "../modules/mailer";
@@ -156,32 +155,6 @@ export default {
 
     const results = await usersRepository.delete(id);
     return response.send(results);
-  },
-
-  //login controller
-
-  async login(request: Request, response: Response) {
-    const repository = getRepository(User);
-
-    const { email, password } = request.body;
-    const users = await repository.findOne({ where: { email } });
-    if (!users) {
-      return response.status(400).json({ error: "Usuario não já existe!" });
-    }
-    const isValidPassword = await bcrypt.compare(password, users.password);
-    if (!isValidPassword) {
-      return response
-        .status(400)
-        .json({ error: "Senha ou Usuario errado, tente novamente" });
-    }
-    const token = jwt.sign(
-      { id: users.id, master: users.master, employee: users.employee },
-      "secret",
-      {
-        expiresIn: "1d",
-      }
-    );
-    return response.json({ users, token });
   },
 
   //Recuperar senha

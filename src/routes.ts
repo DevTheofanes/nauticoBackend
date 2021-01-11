@@ -7,15 +7,19 @@ import ScheduleController from "./controllers/ScheduleController";
 import FindingController from "./controllers/FindingController";
 import CheckListController from "./controllers/CheckListController";
 import authMiddleware from "./middlewares/authMiddlewe";
+import AuthController from "./controllers/AuthController";
 
 const routes = Router();
 
-//Criação de Master e Login
+//Criação de Master
 routes.post("/usersMasters", UserController.create);
-routes.post("/login", UserController.login);
-routes.post("/forgot", UserController.forgotPassword);
 
+//Autenticações na Aplicação
+routes.post("/login", AuthController.session);
+routes.post("/forgot", AuthController.forgotPassword);
+routes.post("/verify", AuthController.verifyToken);
 routes.use(authMiddleware);
+routes.post("/user/:id/changePassword", AuthController.changePassword);
 
 //Criar e ver Funcionarios/Clientes
 routes.get("/users", UserController.index);

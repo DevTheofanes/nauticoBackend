@@ -16,6 +16,10 @@ export class CreateVesselsTable1608755045640 implements MigrationInterface {
             generationStrategy: "increment",
           },
           {
+            name: "userId",
+            type: "integer",
+          },
+          {
             name: "name",
             type: "varchar",
           },
