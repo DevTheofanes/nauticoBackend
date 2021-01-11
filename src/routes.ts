@@ -30,6 +30,7 @@ routes.delete("/users/:id", UserController.delete);
 //Embarcações
 routes.post("/vessels", VesselController.create);
 routes.get("/vessels", VesselController.index);
+routes.get("/users/:id/vessels", VesselController.show);
 routes.put("/vessels/:id", VesselController.update);
 routes.delete("/vessels/:id", VesselController.delete);
 

@@ -15,7 +15,7 @@ import CheckListJ from "../models/CheckListJ";
 export default {
   async create(request: Request, response: Response) {
     const schema = Yup.object().shape({
-      userId: Yup.bool().required("campo obrigatório"),
+      userId: Yup.number().required("campo obrigatório"),
       jetski: Yup.bool().required("campo obrigatório"),
       name: Yup.string().required("campo obrigatório"),
       proprietario: Yup.string().required("campo obrigatório"),
@@ -63,6 +63,7 @@ export default {
     }
 
     const vessel = vesselRepository.create({
+      userId,
       jetski,
       name,
       proprietario,
@@ -88,18 +89,83 @@ export default {
     return response.status(201).json(vessel);
   },
 
-  async index(request: Request, response: Response) {
+  async show(request: Request, response: Response) {
+    const { id } = request.params;
+
     const vesselsRepository = getRepository(Vessel);
 
-    const allVessels = await vesselsRepository.find();
+    const allVessels = await vesselsRepository.find({
+      where: { userId: id, jetski: false },
+    });
 
     const allJetski = await vesselsRepository.find({
+      where: { userId: id, jetski: true },
+    });
+
+    return response.json({ allJetski, allVessels });
+  },
+
+  async index(request: Request, response: Response) {
+    const vesselsRepository = getRepository(Vessel);
+    const usersRepository = getRepository(User);
+
+    const formatedAllVessels = [];
+    const formatedallMotorBoats = [];
+
+    const allVessels: any = await vesselsRepository.find();
+
+    const allJetski: any = await vesselsRepository.find({
       where: { jetski: true },
     });
 
     const allMotorBoats = await vesselsRepository.find({
       where: { jetski: false },
     });
+
+    for (const vessel in allVessels) {
+      if (Object.prototype.hasOwnProperty.call(allVessels, vessel)) {
+        const element = allVessels[vessel];
+        const user: any = await usersRepository.findOne({
+          where: { id: element.userId },
+        });
+
+        allVessels[vessel] = {
+          ...element,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            telephone: user.phone,
+          },
+        };
+
+        formatedAllVessels.push(allVessels[vessel]);
+      }
+    }
+
+    for (const jetski in allMotorBoats) {
+      if (Object.prototype.hasOwnProperty.call(allMotorBoats, jetski)) {
+        const element = allMotorBoats[jetski];
+        const user: any = await usersRepository.findOne({
+          where: { id: element.userId },
+        });
+
+        const schema = {
+          ...element,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            telephone: user.phone,
+          },
+        };
+
+        formatedallMotorBoats.push(schema);
+      }
+    }
+
+    console.log(formatedAllVessels);
+    console.log(formatedallMotorBoats);
 
     return response.json({ allVessels, allJetski, allMotorBoats });
   },

@@ -6,6 +6,9 @@ export default class Vessels {
   id: number;
 
   @Column()
+  userId: number;
+
+  @Column()
   jetski: boolean;
 
   @Column()
