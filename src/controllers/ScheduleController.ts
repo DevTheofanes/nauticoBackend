@@ -77,10 +77,21 @@ export default {
     }
 
     const scheduleRepository = getRepository(Schedule);
+    const schedulesNext = [];
 
     const schedules = await scheduleRepository.find();
 
-    return response.json(schedules);
+    for (const schedule in schedules) {
+      if (Object.prototype.hasOwnProperty.call(schedules, schedule)) {
+        const element: any = schedules[schedule];
+        const timeParsed = subDays(new Date(), 1);
+        if (!isBefore(element.time, timeParsed)) {
+          schedulesNext.push(element);
+        }
+      }
+    }
+
+    return response.json(schedulesNext);
   },
 
   async update(request: Request, response: Response) {

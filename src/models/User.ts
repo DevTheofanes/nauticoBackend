@@ -13,6 +13,9 @@ export default class Users {
   id: number;
 
   @Column()
+  avatar: string;
+
+  @Column()
   name: string;
 
   @Column()

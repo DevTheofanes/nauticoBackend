@@ -1,15 +1,22 @@
 import { Router } from "express";
+import multer from "multer";
+
+import authMiddleware from "./middlewares/authMiddlewe";
+import multerConfig from "./modules/multer";
+
 import UserController from "./controllers/UserController";
+import FileController from "./controllers/FileController";
 import VesselController from "./controllers/VesselController";
 import DamagedController from "./controllers/DamagedController";
 import ReviewController from "./controllers/ReviewController";
 import ScheduleController from "./controllers/ScheduleController";
 import FindingController from "./controllers/FindingController";
 import CheckListController from "./controllers/CheckListController";
-import authMiddleware from "./middlewares/authMiddlewe";
 import AuthController from "./controllers/AuthController";
+import SupplyController from "./controllers/SupplyController";
 
 const routes = Router();
+const upload = multer(multerConfig);
 
 //Criação de Master
 routes.post("/usersMasters", UserController.create);
@@ -27,12 +34,18 @@ routes.post("/users", UserController.new);
 routes.put("/users/:id", UserController.update);
 routes.delete("/users/:id", UserController.delete);
 
+//File/Avatar
+routes.patch("/users/:id/avatar", upload.single("avatar"), FileController.post);
+
 //Embarcações
 routes.post("/vessels", VesselController.create);
 routes.get("/vessels", VesselController.index);
 routes.get("/users/:id/vessels", VesselController.show);
 routes.put("/vessels/:id", VesselController.update);
 routes.delete("/vessels/:id", VesselController.delete);
+
+//Abastecimento
+routes.put("/vessels/:id/supply", SupplyController.update);
 
 //Avarias
 routes.post("/damaged", DamagedController.create);
@@ -52,6 +65,7 @@ routes.get("/vessels/:vesselId/findings", FindingController.show);
 routes.get("/findings", FindingController.index);
 routes.put("/findings/:id", FindingController.update);
 routes.delete("/findings/:id", FindingController.delete);
+routes.put("/findings/:id/delivered", FindingController.delivered);
 
 //Agendamentos
 routes.post("/vessels/:vesselId/schedules", ScheduleController.create);

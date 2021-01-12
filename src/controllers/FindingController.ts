@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { subDays, isBefore } from "date-fns";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import Vessel from "../models/Vessel";
@@ -54,8 +55,20 @@ export default {
     const findingRepository = getRepository(Finding);
 
     const findings = await findingRepository.find({ where: { vesselId } });
+    const findingsMonth = [];
 
-    return response.json(findings);
+    for (const finding in findings) {
+      if (Object.prototype.hasOwnProperty.call(findings, finding)) {
+        const element = findings[finding];
+
+        const timeParsed = subDays(new Date(), 31);
+        if (!isBefore(element.delivered, timeParsed)) {
+          findingsMonth.push(element);
+        }
+      }
+    }
+
+    return response.json(findingsMonth);
   },
 
   async index(request: Request, response: Response) {
@@ -124,5 +137,39 @@ export default {
     const deleteFinding = await findingRepository.delete(id);
 
     return response.json(deleteFinding);
+  },
+
+  async delivered(request: Request, response: Response) {
+    const findingRepository = getRepository(Finding);
+
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      rg: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(request.body))) {
+      return response.status(401).json({ error: "Validation Fails" });
+    }
+
+    const { id }: any = request.params;
+    const { name, rg } = request.body;
+
+    const finding: any = await findingRepository.findOne({
+      id,
+    });
+
+    if (!finding) {
+      return response.status(400).json({ error: "Item não encontrado" });
+    }
+
+    findingRepository.merge(finding, {
+      name,
+      rg,
+      delivered: new Date(),
+    });
+
+    await findingRepository.save(finding);
+
+    return response.status(201).json(finding);
   },
 };
