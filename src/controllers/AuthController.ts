@@ -89,6 +89,12 @@ export default {
     const { id } = request.params;
     const userRepository = getRepository(User);
 
+    if (!request.useMaster) {
+      return response
+        .status(401)
+        .json({ error: "Apenas administradores podem acessar essa rota" });
+    }
+
     const user = await userRepository.findOne({ where: { id } });
 
     if (!user) {
