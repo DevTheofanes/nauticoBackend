@@ -78,7 +78,7 @@ export default {
       { id: user.id, master: user.master, employee: user.employee },
       "secret",
       {
-        expiresIn: "1d",
+        expiresIn: "365d",
       }
     );
     return response.json({ user, tokenForLogin });
