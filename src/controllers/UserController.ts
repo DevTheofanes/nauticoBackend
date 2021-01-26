@@ -99,15 +99,19 @@ export default {
 
     const { name, email, oldPassword, password, phone } = request.body;
 
-    const usersExists = await userRepository.findOne({
-      where: { email },
-    });
-
-    if (usersExists) {
-      return response
-        .status(400)
-        .json({ error: "Usuario com esse email já existe" });
+    if(email && email !== user.email){
+      const usersExists = await userRepository.findOne({
+        where: { email },
+      });
+      
+      if (usersExists) {
+        return response
+          .status(400)
+          .json({ error: "Usuario com esse email já existe" });
+      }
     }
+
+    
 
     if (password && !oldPassword) {
       return response.status(401).json({
